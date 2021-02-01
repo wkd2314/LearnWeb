@@ -150,9 +150,10 @@ public void testDoSomething() {
     - 일반적으로 생성자 방식을 사용하나. 순환참조를 해야만하는 경우 위방식으로 해결가능
 
 # AOP (Aspect Oriented Programming)
-@Transactional : AOP기반 annotation
-
-
+관점(aspect)를 나누어 핵심관점, 부가적관점으로 모듈화 및 재사용
+스프링에서는 프록시 패턴을 사용하여 구현함.
+- Proxy패턴
+    여러 클라이언트가 데이터에 접근시 발생할수 있는 오류를
 
 
 
