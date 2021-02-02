@@ -2,12 +2,17 @@
 
 My log of learning Design Patterns.
 
-WHY Learn Design Pattern?
-I Started learning React and found the useState method
-Actually is from State method. thought i had to learn
-Design patterns first.
+- WHY Learn Design Pattern?
+  I Started learning React and found the useState method    
+  Actually is from State method. thought i had to learn    
+  Design patterns first.
 
-- [Where I Got Helped (A LOT)](https://www.youtube.com/watch?v=vNHpsC5ng_E&list=PLF206E906175C7E0)
+  Above all Word DesignPattern sounds nice.
+
+- [Where I Got Helped](https://www.youtube.com/watch?v=vNHpsC5ng_E&list=PLF206E906175C7E0)
+- [Where I Got Helped 2](https://www.youtube.com/watch?v=0GTe8e7DYHk&feature=youtu.be)
+
+- [The Well-Known Book for DesignPattern](http://www.uml.org.cn/c++/pdf/designpatterns.pdf)
 <hr/>
 
 ## Basics
@@ -101,7 +106,7 @@ class Dog{
     }
     ```
 
-  <hr/>
+<hr/>
 
 ## Strategy Pattern
 
@@ -185,7 +190,7 @@ public class Bird extends Animal {
     - now can fly (may be by client)
     - now fly super fast
 
-    <hr/>
+<hr/>
 
 ## Observer Pattern
 
@@ -265,15 +270,15 @@ that shares common super class
 
 ```Java
 public EnemyShip makeEnemyShip(String newShipType) {
-        if (newShipType.equals("U")) {
-            return new UFOEnemyShip();
-        } else if (newShipType.equals("R")) {
-            return new RocketEnemyShip();
-        } else if (newShipType.equals("B")) {
-            return new BigUFOEnemyShip();
-        } else
-            return null;
-    }
+    if (newShipType.equals("U")) {
+        return new UFOEnemyShip();
+    } else if (newShipType.equals("R")) {
+        return new RocketEnemyShip();
+    } else if (newShipType.equals("B")) {
+        return new BigUFOEnemyShip();
+    } else
+        return null;
+    } 
 }
 ```
 
@@ -289,7 +294,9 @@ public EnemyShip makeEnemyShip(String newShipType) {
 * The Type can be chosen by client in runtime
 
 - As named Factory pattern i feel like it is likely to be
-  used in game such as Barrak in Starcraft
+  used in game such as Barrack in Starcraft
+
+<hr/>
 
 ## Abstract Factory Pattern
 
@@ -302,4 +309,218 @@ So as a result there will be MANY factories connected to ONE form
 - Good point and Bad point
   - Can Create families of related objects w/o specifying a concrete class  
     Just like factory pattern, Every ships take adventage of polymorphism
-  - It can get complicated
+  - It can get complicated(very)
+
+![Abstract-Factory-Small](/AbstractFactoryPattern/Abstract-Factory-Small.png)
+
+- Each Abstract Class(Ship,Factory,Building) is seperated to Concrete Childs
+  Giving`Flexability` to each level of creating enemy ship.
+- Process
+  1. Create Base entities and Builer
+  2. Send entity to Builder with type information
+  3. Builder Sends to different Factories based on Type
+  4. Inside Each Factory add Different features to entity
+  5. Base Entities now turned in to various different subclasses
+
+  * for example, in this enemyship there can be one with only missle,
+    there can also be one with fast engine only all belonging to same super.
+
+- This Pattern is combination of Strategy, Polymorphism, Factory.
+
+<hr/>
+
+## Singleton Pattern
+
+To prevent instantiating more than one object in class
+
+- Basic Implementation
+  ```Java
+  public class Singleton {
+      private static Singleton firstInstance = null;
+      private Singleton() { }
+      public static Singleton getInstance() {
+          if(firstInstance == null) { // lazy instantiation
+          firstInstance = new Singleton();
+          }
+          return firstInstance;
+      }
+  } 
+  ```
+  its called lazy instantiation, if NOT needed never create one
+
+- Issue with Singleton
+  MultiThread environment has potential to create more than one obj
+  * A Thread is light-weight small process(task).
+  So MultiThread is Like a Carrier with Multi Interceptors!
+  ```Java
+  // Inside getInstance method //
+  if (firstThread) { 
+      firstThread = false;
+      Thread.currentThread();
+      Thread.sleep(1000);
+  }
+  //////////////////////////////
+  public static void main(String[] args) {
+      Runnable getData = new GetData();
+      Runnable getDataAgain = new GetData();
+
+      new Thread(getData).start();
+      new Thread(getDataAgain).start();
+  }
+  public class GetData implements Runnable {
+      public void run() {
+          Singleton newInstance = Singleton.getInstance();
+          System.out.println(System.identityHashCode(newInstance));
+      }
+  }
+  ```
+  Two Threads will have different identityHashCode! (two instance made)
+
+- Solutions for multi thread
+  - use synchronized option in _Constructor_
+    This option prevents second thread to come into Constructor
+    Before first thread goes out. 
+    So Second thread will wait while First Thread sleeps(1000);
+    - This will make process `VERY SLOW`
+  ```Java
+  public class Singleton {
+      private static Singleton firstInstance = null;
+      private Singleton() { }
+      public static synchronized Singleton getInstance() {
+          if(firstInstance == null) {
+              if (firstThread) { 
+                  firstThread = false;
+                  Thread.currentThread();
+                  Thread.sleep(1000);
+              }
+          firstInstance = new Singleton();
+          }
+          return firstInstance;
+      }
+  }
+  ``` 
+  - Instead use synchronized for only _FIRST THREAD_
+  ```Java
+  public static Singleton getInstance() {
+      if (firstInstance == null) {
+          synchronized (Singleton.class) {
+              if (firstInstance == null) {
+                  firstInstance = new Singleton();
+              }
+          }
+      }
+      return firstInstance;
+  }
+  ```
+  This way is Thread-Safe. and synchronized will only work
+  with First Thread so it will not get slow
+
+- More Ways to Handle Thread Issues 
+
+  excluded synchornize way explained above
+
+  1. make instance in class initialization
+    Spring uses this way   
+    Can waste memory because it will create unused instance too.
+  ```Java
+  class Singleton{
+    private static Singleton instance = new Singleton();
+
+    public static Singleton getInstance() {
+      return instance;
+    }
+    private Singleton() {}
+  }
+  ```
+  2. LazyHolder
+    inner static class is initialized when getInstance() method
+    refercences LazyHolder.instance for the first time.
+
+    so. simply using another getter(constructor) with static    
+    inside getter will solve the issue
+
+    This also saves memory. never used instance will not be created
+  ```Java
+  class Singleton {
+    public static Singleton getInstance() {
+        if (firstThread) {  // for test
+            firstThread = false;
+            Thread.currentThread();
+            Thread.sleep(1000);
+        }
+        return LazyHolder.instance; //second thread will create instance
+    }
+    private static class LazyHolder {
+        private static final Singleton instance = new Singleton();
+    }
+    private Singleton() {}
+  }
+  ```
+
+<hr/>
+
+## Builder Pattern
+
+When creating obj there is mainly two ways.
+```Java
+// First way
+Student s1 = new Student();
+s1.setFirstName("Berry");
+s1.setLastName("Allen");
+s1.setGender('m');
+System.out.println(s1);
+// Second way
+Student s2 = new Student("Iris", "West", 0, 'f');
+System.out.println(s2);
+```
+
+What if there are tons of attributes(parameters) to create ONE OBJ?
+- Issues
+  - Setter :  Multiple Statements for one Obj (statement = parameter num)
+  - Constructor : Order of Parameters has to be Preserved
+
+- Solution
+  - Create inner static class Builder then setter in it
+  ```Java
+  public static class Builder {
+      private String firstName;
+      private String lastName;
+      public Builder setFirstName(String firstName) {
+          this.firstName = firstName;
+          return this;
+      }
+      public Builder setLastName(String lastName) { ... }
+      public Student build() {
+          return new Student(this.firstName, this.lastName);
+      }
+  }
+  ////
+  Student s1 = new Student.Builder().setLastName("T").setFirstName("P").build();
+  Student s2 = new Student.Builder().setLastName("E").build();
+  ```
+  This way order is not preserved, can even skip   
+  some parameters, creating object with one statement.
+
+  Also think of using encapsulation making it cleaner!
+  ```Java
+  public interface RobotBuilder {...}
+  public class  OldRobotBuilder implements RobotBuilder {...}
+  public class RobotEngineer {
+    private RobotBuilder robotBuilder;
+    public RobotEngineer(RobotBuilder robotBuilder) {
+        this.robotBuilder = robotBuilder;
+    }
+    public Robot getRobot() {...}
+    public Robot makeRobot() {...}
+  }
+  // in Main.java //
+  RobotBuilder oldStyleRobot = new OldRobotBuilder();
+  // Blueprint of old styled robot!
+  RobotEngineer robotEngineer = new RobotEngineer(oldStyleRobot);
+  robotEngineer.makeRobot();
+  Robot firstRobot = robotEngineer.getRobot();
+  ```
+
+<hr/>
+
+## Prototype Pattern
