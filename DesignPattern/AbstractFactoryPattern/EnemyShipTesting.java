@@ -1,0 +1,17 @@
+package AbstractFactoryPattern;
+
+import AbstractFactoryPattern.Data.EnemyShip;
+import AbstractFactoryPattern.Data.EnemyShipBuilding;
+import AbstractFactoryPattern.Data.UFOEnemyShipBuilding;
+
+public class EnemyShipTesting {
+    public static void main(String[] args) {
+        EnemyShipBuilding MakeUFOs = new UFOEnemyShipBuilding();
+
+        EnemyShip theGrunt = MakeUFOs.orderTheShip("UFO");
+        System.out.println(theGrunt + "\n");
+
+        EnemyShip theBoss = MakeUFOs.orderTheShip("UFO BOSS");
+        System.out.println(theBoss + "\n");
+    }
+}
