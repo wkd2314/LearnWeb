@@ -2,8 +2,8 @@ package FactoryPattern;
 
 public abstract class EnemyShip {
 
-    private String name;
-    private double amtDamage;
+    protected String name;
+    protected double amtDamage;
 
     public String getName() {
         return name;
