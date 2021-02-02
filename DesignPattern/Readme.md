@@ -2,12 +2,11 @@
 
 My log of learning Design Patterns.
 
-- WHY Learn Design Pattern?
+- WHY Learn Design Pattern?    
   I Started learning React and found the useState method    
-  Actually is from State method. thought i had to learn    
-  Design patterns first.
+  Actually is from State method. thought i had to learn Design patterns first.
 
-  Above all Word DesignPattern sounds nice.
+  Above all word DesignPattern sounds nice.
 
 - [Where I Got Helped](https://www.youtube.com/watch?v=vNHpsC5ng_E&list=PLF206E906175C7E0)
 - [Where I Got Helped 2](https://www.youtube.com/watch?v=0GTe8e7DYHk&feature=youtu.be)
@@ -524,3 +523,47 @@ What if there are tons of attributes(parameters) to create ONE OBJ?
 <hr/>
 
 ## Prototype Pattern
+
+```Java
+public static void main(String[] args) {
+    Student s1 = new Student("Barry", "male", "St. Josephs");
+    Student s2 = new Student("Harry", "male", "St. Josephs");
+    Student s3 = new Student("Wally", "male", "St. Josephs");
+}
+```
+Creating new object with new keyword is Unefficient.
+So prototype pattern is for reducing use of new keyword.
+
+- Implementation
+  1. implement Cloneable
+  2. Create clone method inside with super.clone()
+    There is no parent of Student class so super is Object class
+  3. surround with try-catch statement
+    There is possibility it can create Error so it doesnt run w/o error handling
+  ```Java
+  public class Student implements Cloneable {
+    public Student clone() {
+        Student s = null;
+        try {
+            s = (Student) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return s;
+    }
+  }
+  // Main
+  public static void main(String[] args) {
+    Student prototype = new Student();
+    prototype.setGender("male");
+    prototype.setSchool("St. Josephs");
+
+    Student s1 = prototype.clone();
+    s1.setName("Barry");
+    Student s2 = prototype.clone();
+    s2.setName("Harry");
+  }
+  ```
+
+<hr/>
+
